@@ -1,0 +1,7 @@
+seeder:
+  file: ./seeder/seeder.rb
+  disabled: false
+parsers:
+  - page_type: part_number_search
+    file: ./parsers/part_number_search.rb
+    disabled: false

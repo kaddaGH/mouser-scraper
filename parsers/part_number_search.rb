@@ -28,7 +28,7 @@ if html.at_css('#product-desc')
   outputs << product_details
 
 # If it's listing
-elsif html.at_css('.searchResultsHeader')
+elsif html.at_css('.SearchResultsPaging')
   # Extract all products links from page
   content.scan(/'(.+?)' OnClick="/).each do |product_link|
 

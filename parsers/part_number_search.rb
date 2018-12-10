@@ -1,14 +1,25 @@
-html = Nokogiri.HTML(content)
-product_details = {
-    _collection: 'products',
-    "ProductName" => html.css('span.bc-no-link')&.text,
-    "ProductDescription" => html.css('span#spnDescription')&.text&.strip,
-    "price" => content.match(/"Qty":1,"FormattedUnitPrice":"([^"]+?)"/) ? content.scan(/"Qty":1,"FormattedUnitPrice":"([^"]+?)"/)[0][0] : ""
+rerequire './lib/parser/products_listing'
+require './lib/parser/product_details'
+# Part number search return product details page if one result found or listing of products if there is many matches
+# This parser act like  controler and call right parser for right page
+params = {
+    vars: page['vars'],
+    content: content,
+    outputs: outputs,
+    page: page,
+    pages: pages
 }
-# Extract extra details for the  product
-content.scan(/"Label":"([^"]+?):".+?"Value":"([^"]+?)"/).each do |specification|
 
-  product_details[specification[0].sub(/[^A-Za-z]/, '')] = specification[1]
 
+nokogiri = Nokogiri.HTML(content)
+# if listing page detected
+if nokogiri.at_css('#product-desc')
+  ParserProductDetails.new(params).parse
+# if product details page found
+elsif nokogiri.at_css('#ctl00_ContentMain_liProductsTab')
+  ParserProductsList.new(params).parse
 end
-outputs << product_details
+
+
+
+

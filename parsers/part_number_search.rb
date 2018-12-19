@@ -6,21 +6,29 @@ html = Nokogiri.HTML(content)
 if html.at_css('#product-desc')
   product_details = {
       _collection: 'products',
-      "part_number" => html.css('span#spnMouserPartNumFormattedForProdInfo').text.strip,
-      "quantity" => html.css('.pdp-pricing-header').text.sub('In Stock:','').strip,
-      "description" => html.css('span#spnDescription').text.strip,
-      "manufacturer_number" => html.css('span#spnManufacturerPartNumber').text.strip,
+      #QuantityOnHand
+      "Manufacturer" => html.css('#lnkManufacturerName').text.strip,
+      "PartNumberWebsite" => html.css('span#spnManufacturerPartNumber').text.strip,
+      "QuantityOnHand" => html.at_css('div.col-xs-4:contains("Stock:")').next_element.text.to_i,
+      "QuantityOnOrder" => html.at_css('div.col-xs-4:contains("On Order:")').next_element.text.to_i
 
   }
+  min_max_quantity_regex = /<div>Minimum:&nbsp(.+)&nbsp&nbsp&nbspMultiples:&nbsp(.+)</
+  min_max_match = content.match(min_max_quantity_regex)
+  if min_max_match
+    product_details['MinimumOrderQuantity'] = min_max_match[1]
+    product_details['StandardPackageQuantity'] = min_max_match[2]
+
+  end
   prices_block = html.at_css('.pdp-pricing-table')
   unless prices_block.nil?
-     product_details['prices'] = prices_block.css('.div-table-row')[0..-1].map do |price_info|
+    counter=1
+    prices_block.css('.div-table-row')[0..-1].map do |price_info|
       columns = price_info.css('div div')
-      {
-          'quantity':columns[0].text.strip,
-          'unit_price':columns[2].text.strip,
-          'ext_price':columns[3].text.strip
-      }
+      product_details['Quantity'+counter.to_s] = columns[1].text.strip
+      product_details['Price'+counter.to_s] = columns[2].text.strip
+      counter+=1
+
     end
   end
 

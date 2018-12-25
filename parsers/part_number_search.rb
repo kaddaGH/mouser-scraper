@@ -5,10 +5,10 @@ product_input_details = page['vars']['product_input_details']
 if html.at_css('#product-desc')
   product_details = {
       _collection: 'products',
-      "Manufacturer" => html.css('#lnkManufacturerName').text.strip,
-      "PartNumberWebsite" => html.css('span#spnManufacturerPartNumber').text.strip,
-      "QuantityOnHand" => html.at_css('div.col-xs-4:contains("Stock:")').next_element.text.delete(',').to_i,
-      "QuantityOnOrder" => html.at_css('div.col-xs-4:contains("On Order:")').next_element.text.to_i
+      "Manufacturer" => (html.css('#lnkManufacturerName').nil?)?'':html.css('#lnkManufacturerName').text.strip ,
+      "PartNumberWebsite" => (html.css('span#spnManufacturerPartNumber').nil?)?'':html.css('span#spnManufacturerPartNumber').text.strip,
+      "QuantityOnHand" => (html.at_css('div.col-xs-4:contains("Stock:")').nil?)?'':html.at_css('div.col-xs-4:contains("Stock:")').next_element.text.delete(',').to_i,
+      "QuantityOnOrder" => (html.at_css('div.col-xs-4:contains("On Order:")').nil?)?'':html.at_css('div.col-xs-4:contains("On Order:")').next_element.text.to_i
 
   }
   min_max_quantity_regex = /<div>Minimum:&nbsp(.+)&nbsp&nbsp&nbspMultiples:&nbsp(.+)</

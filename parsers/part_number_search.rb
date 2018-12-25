@@ -1,6 +1,6 @@
 # Part number search return product details page if one result found or listing of products if there is many matches
 html = Nokogiri.HTML(content)
-product_input_details = page['var']['product_input_details']
+product_input_details = page['vars']['product_input_details']
 # If it's one product details returned by search
 if html.at_css('#product-desc')
   product_details = {

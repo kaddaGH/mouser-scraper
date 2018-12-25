@@ -1,15 +1,13 @@
 # Part number search return product details page if one result found or listing of products if there is many matches
-
 html = Nokogiri.HTML(content)
-
+product_input_details = page['var']['product_input_details']
 # If it's one product details returned by search
 if html.at_css('#product-desc')
   product_details = {
       _collection: 'products',
-      #QuantityOnHand
       "Manufacturer" => html.css('#lnkManufacturerName').text.strip,
       "PartNumberWebsite" => html.css('span#spnManufacturerPartNumber').text.strip,
-      "QuantityOnHand" => html.at_css('div.col-xs-4:contains("Stock:")').next_element.text.to_i,
+      "QuantityOnHand" => html.at_css('div.col-xs-4:contains("Stock:")').next_element.text.delete(',').to_i,
       "QuantityOnOrder" => html.at_css('div.col-xs-4:contains("On Order:")').next_element.text.to_i
 
   }
@@ -33,6 +31,8 @@ if html.at_css('#product-desc')
   end
 
 
+
+  product_details = product_details.merge(product_input_details)
   outputs << product_details
 
 # If it's listing
@@ -44,6 +44,7 @@ elsif html.at_css('.SearchResultsPaging')
         page_type: 'part_number_search',
         method: 'GET',
         url: "https://www.mouser.com#{product_link[0]}",
+        vars: {'product_input_details' => product_input_details}
 
     }
 

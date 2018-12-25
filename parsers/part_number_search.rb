@@ -23,7 +23,7 @@ if html.at_css('#product-desc')
     counter=1
     prices_block.css('.div-table-row')[0..-1].map do |price_info|
       columns = price_info.css('div div')
-      product_details['Quantity'+counter.to_s] = columns[1].text.strip
+      product_details['Quantity'+counter.to_s] = columns[1].text.delete(',').strip
       product_details['Price'+counter.to_s] = columns[2].text.strip
       counter+=1
 
